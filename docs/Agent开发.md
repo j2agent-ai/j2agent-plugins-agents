@@ -4,7 +4,7 @@
 
 ## 1. 核心契约
 
-`AiAgent` 位于 `io.github.jerryt92.j2agent.service.llm.agent.AiAgent`，基于 **Spring AI Alibaba `ReactAgent`** 封装对话、记忆、工具、Skill、RAG 等能力。
+`AiAgent` 位于 `io.github.jerryt92.j2agent.service.llm.agent.inf.AiAgent`，基于 **Spring AI Alibaba `ReactAgent`** 封装对话、记忆、工具、Skill、RAG 等能力。
 
 ### 1.1 必须实现的抽象方法
 
@@ -33,7 +33,7 @@
 ```java
 package com.nms.prodplugin.ai.center.demo;
 
-import io.github.jerryt92.j2agent.service.llm.agent.AiAgent;
+import io.github.jerryt92.j2agent.service.llm.agent.inf.AiAgent;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
