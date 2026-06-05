@@ -58,7 +58,7 @@ public class AssistantReactAgent extends AiAgent implements ExternalSkills, McpF
 
     @Override
     public AgentThinkingOverride getThinkingOverride() {
-        return AgentThinkingOverride.OFF;
+        return AgentThinkingOverride.PROVIDER_DEFAULT;
     }
 
     public AssistantReactAgent(
