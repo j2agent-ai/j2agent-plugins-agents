@@ -2,10 +2,10 @@ package io.github.jerryt92.j2agent.agent.qa.assistant;
 
 import io.github.jerryt92.j2agent.agent.qa.prompts.SystemPrompts;
 import io.github.jerryt92.j2agent.rag.AbstractCollectionKbRetriever;
-import io.github.jerryt92.j2agent.service.llm.agent.inf.constant.AgentThinkingOverride;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.AiAgent;
+import io.github.jerryt92.j2agent.service.llm.agent.inf.constant.AgentThinkingOverride;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.feature.ExternalSkills;
-import io.github.jerryt92.j2agent.service.llm.mcp.McpService;
+import io.github.jerryt92.j2agent.service.llm.agent.inf.feature.McpFeature;
 import io.github.jerryt92.j2agent.tools.MathTool;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.support.ToolCallbacks;
@@ -22,9 +22,8 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class AssistantReactAgent extends AiAgent implements ExternalSkills {
+public class AssistantReactAgent extends AiAgent implements ExternalSkills, McpFeature {
     private final MathTool mathTool;
-    private final McpService mcpService;
     private final AbstractCollectionKbRetriever documentRetriever;
 
     @Override
@@ -64,10 +63,8 @@ public class AssistantReactAgent extends AiAgent implements ExternalSkills {
 
     public AssistantReactAgent(
             MathTool mathTool,
-            McpService mcpService,
             @Qualifier("QaAssistantKbRetriever") AbstractCollectionKbRetriever documentRetriever) {
         this.mathTool = mathTool;
-        this.mcpService = mcpService;
         this.documentRetriever = documentRetriever;
     }
 
@@ -77,14 +74,6 @@ public class AssistantReactAgent extends AiAgent implements ExternalSkills {
     @Override
     protected ToolCallback[] buildToolCallbacks() {
         List<ToolCallback> list = new ArrayList<>(Arrays.asList(ToolCallbacks.from(mathTool)));
-        ToolCallback[] mcpCallbacks = mcpService.getToolCallbackProvider().getToolCallbacks();
-        if (mcpCallbacks != null) {
-            for (ToolCallback cb : mcpCallbacks) {
-                if (cb != null) {
-                    list.add(cb);
-                }
-            }
-        }
         log.info("MCP tool callbacks merged for chat assistant.");
         return list.toArray(ToolCallback[]::new);
     }
