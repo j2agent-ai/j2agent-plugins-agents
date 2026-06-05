@@ -1,6 +1,6 @@
 package io.github.jerryt92.j2agent.example;
 
-import io.github.jerryt92.j2agent.service.llm.agent.AiAgent;
+import io.github.jerryt92.j2agent.service.llm.agent.inf.AiAgent;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;

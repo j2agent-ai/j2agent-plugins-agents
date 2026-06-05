@@ -2,9 +2,9 @@ package io.github.jerryt92.j2agent.agent.qa.assistant;
 
 import io.github.jerryt92.j2agent.agent.qa.prompts.SystemPrompts;
 import io.github.jerryt92.j2agent.rag.AbstractCollectionKbRetriever;
-import io.github.jerryt92.j2agent.service.llm.agent.AgentThinkingOverride;
-import io.github.jerryt92.j2agent.service.llm.agent.AiAgent;
-import io.github.jerryt92.j2agent.service.llm.agent.feature.ExternalSkills;
+import io.github.jerryt92.j2agent.service.llm.agent.inf.constant.AgentThinkingOverride;
+import io.github.jerryt92.j2agent.service.llm.agent.inf.AiAgent;
+import io.github.jerryt92.j2agent.service.llm.agent.inf.feature.ExternalSkills;
 import io.github.jerryt92.j2agent.service.llm.mcp.McpService;
 import io.github.jerryt92.j2agent.tools.MathTool;
 import lombok.extern.slf4j.Slf4j;
