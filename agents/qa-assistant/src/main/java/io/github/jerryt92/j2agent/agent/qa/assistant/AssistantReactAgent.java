@@ -95,35 +95,4 @@ public class AssistantReactAgent extends AiAgent {
     protected AbstractCollectionKbRetriever buildDocumentRetriever() {
         return documentRetriever;
     }
-
-    /**
-     * QA 助手采用严格 RAG：无命中时不保留原问题而提示超出知识库；有命中时仅允许依据检索上下文作答。
-     */
-    @Override
-    protected QueryAugmenter buildQueryAugmenter() {
-        PromptTemplate promptTemplate = new PromptTemplate("""
-                以下为知识库检索上下文。请仅依据上下文回答，不得引入上下文以外的产品事实。
-                
-                ---------------------
-                {context}
-                ---------------------
-                
-                规则：
-                1. 答案须能在上下文中找到明确依据；不足以回答时，请说明无法根据知识库作答，不要编造或猜测。
-                2. 避免“根据上下文”“所提供的资料”等套话。
-                
-                用户问题：{query}
-                
-                回答：
-                """);
-        PromptTemplate emptyContextPromptTemplate = new PromptTemplate("""
-                当前问题在知识库中未检索到相关内容。
-                请礼貌告知用户：该问题超出当前知识库范围，无法作答；不要编造或凭常识补充产品信息。
-                """);
-        return ContextualQueryAugmenter.builder()
-                .promptTemplate(promptTemplate)
-                .emptyContextPromptTemplate(emptyContextPromptTemplate)
-                .allowEmptyContext(false)
-                .build();
-    }
 }
