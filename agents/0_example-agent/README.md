@@ -53,4 +53,6 @@ mkdir -p "$PLUGIN_DIR/example-agent-1.0.0-SNAPSHOT"
 tar -xzf target/example-agent-1.0.0-SNAPSHOT.tar.gz -C "$PLUGIN_DIR/example-agent-1.0.0-SNAPSHOT/"
 ```
 
-扩展能力见 [Agent 开发文档](../../../j2agent/docs/插件Agent接入与界面/agent开发/README.md)。
+## 详细文档
+
+扩展能力见 [Agent 开发文档](../../../j2agent-docs/agent开发/文档/README.md)。
