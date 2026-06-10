@@ -1,6 +1,6 @@
 package io.github.jerryt92.j2agent.agent.qa.rag;
 
-import io.github.jerryt92.j2agent.rag.AbstractCollectionKbRetriever;
+import io.github.jerryt92.j2agent.service.rag.inf.AbstractCollectionKbRetriever;
 import io.github.jerryt92.j2agent.service.rag.retrieval.Retriever;
 import org.springframework.stereotype.Component;
 
