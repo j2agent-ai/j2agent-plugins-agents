@@ -1,10 +1,10 @@
 package io.github.jerryt92.j2agent.agent.qa;
 
 import io.github.jerryt92.j2agent.agent.qa.tool.KnowledgeRepoGrepTools;
-import io.github.jerryt92.j2agent.rag.AbstractCollectionKbRetriever;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.AiAgent;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.constant.AgentThinkingOverride;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.feature.ExternalSkills;
+import io.github.jerryt92.j2agent.service.rag.inf.AbstractCollectionKbRetriever;
 import io.github.jerryt92.j2agent.service.rag.knowledge.repo.KnowledgeRepoMetadataService;
 import io.github.jerryt92.j2agent.tools.MathTool;
 import io.github.jerryt92.j2agent.tools.WebTool;
@@ -48,7 +48,12 @@ public class AssistantReactAgent extends AiAgent implements ExternalSkills {
 
     @Override
     public int getSort() {
-        return 1;
+        return 2;
+    }
+
+    @Override
+    public String getLogo() {
+        return "💬";
     }
 
     @Override
@@ -111,4 +116,6 @@ public class AssistantReactAgent extends AiAgent implements ExternalSkills {
                 .allowEmptyContext(true)
                 .build();
     }
+
+
 }
