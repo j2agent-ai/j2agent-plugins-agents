@@ -6,6 +6,7 @@ j2agent Agent 插件示例仓库：每个 Agent 为**独立 Maven 工程**；`ag
 
 ```text
 j2agent-plugins-agents/
+  common-tools/                     # Agent 公共工具库（知识库 grep/read 等）
   agents/
     pom.xml                         # 本仓库聚合 POM（一键编译，勿对外继承）
     0_example-agent/                # ★ 最小模板，复制此目录开始开发
@@ -21,22 +22,50 @@ j2agent-plugins-agents/
 cd j2agent && mvn clean install
 ```
 
-`agents/pom.xml` 以 `j2agent-bom` 为 parent，第三方依赖无需写 `<version>`。`j2agent-server` 版本在 `agents/pom.xml` 的 `dependencyManagement` 中声明。
+`common-tools` 与 `agents/pom.xml` 以 `j2agent-bom` 为 parent，第三方依赖无需写 `<version>`。`j2agent-server` 与 `common-tools` 自身版本在各自 `dependencyManagement` 中声明。
+
+## common-tools 复用
+
+[`common-tools`](common-tools/) 为**独立 Maven 工程**（与 `agents/` 平级，parent 为 `j2agent-bom`，不纳入 `agents/pom.xml` 的 `<modules>`）。提供可跨 Agent 复用的工具类（如 `KnowledgeRepoGrepTools`）。依赖它的 Agent 须先在本机安装公共库：
+
+```bash
+cd common-tools && mvn clean install
+```
+
+Agent 侧声明依赖，并在 `package` 阶段通过 `maven-shade-plugin` 将 `common-tools` 打入 Agent 瘦 JAR（参考 [`j2agent-qa-assistant/pom.xml`](agents/j2agent-qa-assistant/pom.xml)）。
+
+```xml
+<dependency>
+    <groupId>io.github.jerryt92.j2agent.plugins</groupId>
+    <artifactId>common-tools</artifactId>
+</dependency>
+```
 
 ## 继承关系
 
 | 坐标 | 是否必须继承 | 用途 |
 |------|-------------|------|
 | `j2agent-plugins-agents`（`agents/pom.xml`） | **否** | 本仓库示例聚合，便于一键 `mvn package` |
+| `common-tools` | **否** | 独立公共工具库，与 `agents/` 平级，parent 为 `j2agent-bom` |
 | `j2agent-bom` | **推荐** | 第三方依赖版本统一管理 |
 
 外部新 Agent 在任意 Git 仓库中维护**独立 `pom.xml`**，在工程内放置 `src/main/assemblies/agent-package.xml`（可参考示例 Agent）并配置打包插件，**不要**继承 `agents/pom.xml`。
 
 ## 一键编译（本仓库）
 
+依赖 `common-tools` 的 Agent（如 `j2agent-qa-assistant`）需先安装公共库，再编译 agents：
+
 ```bash
 cd j2agent && mvn clean install
-cd ../j2agent-plugins-agents/agents && mvn clean package
+cd ../j2agent-plugins-agents/common-tools && mvn clean install
+cd ../agents && mvn clean package
+```
+
+不依赖 `common-tools` 时，可直接：
+
+```bash
+cd j2agent-plugins-agents/agents
+mvn clean package
 ```
 
 ## 单个 Agent 独立打包

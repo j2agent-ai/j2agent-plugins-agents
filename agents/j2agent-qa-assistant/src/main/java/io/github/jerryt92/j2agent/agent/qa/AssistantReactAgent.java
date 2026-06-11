@@ -1,6 +1,6 @@
 package io.github.jerryt92.j2agent.agent.qa;
 
-import io.github.jerryt92.j2agent.agent.qa.tool.KnowledgeRepoGrepTools;
+import io.github.jerryt92.j2agent.plugins.tool.KnowledgeRepoGrepTools;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.AiAgent;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.constant.AgentThinkingOverride;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.feature.ExternalSkills;

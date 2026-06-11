@@ -26,6 +26,7 @@
         <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
         <maven.jar.plugin.version>3.4.2</maven.jar.plugin.version>
         <maven.assembly.plugin.version>3.7.1</maven.assembly.plugin.version>
+        <maven.shade.plugin.version>3.5.0</maven.shade.plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -34,6 +35,11 @@
                 <groupId>io.github.jerryt92.j2agent</groupId>
                 <artifactId>j2agent-server</artifactId>
                 <version>${j2agent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.jerryt92.j2agent.plugins</groupId>
+                <artifactId>common-tools</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -80,6 +86,11 @@
                             <exclude>com/nms/platsvc/**</exclude>
                         </excludes>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>${maven.shade.plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
