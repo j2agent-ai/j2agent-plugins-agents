@@ -2,6 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.jerryt92.j2agent</groupId>
+        <artifactId>j2agent-bom</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../../j2agent/j2agent-bom/pom.xml</relativePath>
+    </parent>
     <groupId>io.github.jerryt92.j2agent</groupId>
     <artifactId>j2agent-plugins-agents</artifactId>
     <version>1.0.0-SNAPSHOT</version>
@@ -13,13 +19,30 @@
     </description>
 
     <properties>
+        <j2agent.version>1.0.0-SNAPSHOT</j2agent.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
         <maven.jar.plugin.version>3.4.2</maven.jar.plugin.version>
         <maven.assembly.plugin.version>3.7.1</maven.assembly.plugin.version>
+        <maven.shade.plugin.version>3.5.0</maven.shade.plugin.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.github.jerryt92.j2agent</groupId>
+                <artifactId>j2agent-server</artifactId>
+                <version>${j2agent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.jerryt92.j2agent.plugins</groupId>
+                <artifactId>common-tools</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <modules>
         <module>0_example-agent</module>
@@ -63,6 +86,11 @@
                             <exclude>com/nms/platsvc/**</exclude>
                         </excludes>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>${maven.shade.plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
