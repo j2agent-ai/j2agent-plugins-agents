@@ -1,6 +1,7 @@
 package io.github.jerryt92.j2agent.plugins.tool;
 
 import io.github.jerryt92.j2agent.config.rag.KnowledgeRepoProperties;
+import io.github.jerryt92.j2agent.service.rag.knowledge.repo.KnowledgeMarkdownImageRewriter;
 import io.github.jerryt92.j2agent.service.rag.knowledge.repo.KnowledgeRepoMetadataService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -118,6 +119,60 @@ class KnowledgeRepoGrepToolsTest {
         String result = tools.readKnowledgeRepoFile("j2agent-docs/readme.txt", null);
 
         assertTrue(result.contains("无效或越界"));
+    }
+
+    @Test
+    void grep_rewritesRelativeImageUrls_whenRewriterProvided() throws Exception {
+        KnowledgeRepoGrepTools rewritingTools = createToolsWithImageRewriter();
+        Path docsDir = tempDir.resolve("j2agent-docs").resolve("product");
+        Files.createDirectories(docsDir);
+        Path md = docsDir.resolve("faq.md");
+        Files.writeString(md, """
+                # 登录说明
+                登录页如下：
+                ![登录页](./images/登录 页.png)
+                """, StandardCharsets.UTF_8);
+
+        String result = rewritingTools.grepKnowledgeRepo("登录页", "");
+
+        assertTrue(result.contains("/file/repo/"));
+        assertTrue(result.contains("j2agent-docs/product/images/%E7%99%BB%E5%BD%95+%E9%A1%B5.png"));
+        assertFalse(result.contains("./images/登录 页.png"));
+    }
+
+    @Test
+    void read_rewritesRelativeImageUrls_whenRewriterProvided() throws Exception {
+        KnowledgeRepoGrepTools rewritingTools = createToolsWithImageRewriter();
+        Path docsDir = tempDir.resolve("j2agent-docs").resolve("product");
+        Files.createDirectories(docsDir);
+        Path md = docsDir.resolve("faq.md");
+        Files.writeString(md, """
+                ![登录页](./images/登录 页.png)
+                """, StandardCharsets.UTF_8);
+
+        String result = rewritingTools.readKnowledgeRepoFile("j2agent-docs/product/faq.md", null);
+
+        assertTrue(result.contains("/file/repo/j2agent-docs/product/images/%E7%99%BB%E5%BD%95+%E9%A1%B5.png"));
+        assertFalse(result.contains("./images/登录 页.png"));
+    }
+
+    @Test
+    void read_keepsRelativeImageUrls_whenRewriterNotProvided() throws IOException {
+        Path docsDir = tempDir.resolve("j2agent-docs").resolve("product");
+        Files.createDirectories(docsDir);
+        Path md = docsDir.resolve("faq.md");
+        Files.writeString(md, "![登录页](./images/登录 页.png)\n", StandardCharsets.UTF_8);
+
+        String result = tools.readKnowledgeRepoFile("j2agent-docs/product/faq.md", null);
+
+        assertTrue(result.contains("./images/登录 页.png"));
+        assertFalse(result.contains("/file/repo/"));
+    }
+
+    private KnowledgeRepoGrepTools createToolsWithImageRewriter() throws Exception {
+        KnowledgeRepoMetadataService metadataService = new KnowledgeRepoMetadataService(new KnowledgeRepoProperties());
+        setRepoRootPath(metadataService, tempDir);
+        return new KnowledgeRepoGrepTools(metadataService, "j2agent-docs", new KnowledgeMarkdownImageRewriter());
     }
 
     private static void setRepoRootPath(KnowledgeRepoMetadataService metadataService, Path root) throws Exception {
