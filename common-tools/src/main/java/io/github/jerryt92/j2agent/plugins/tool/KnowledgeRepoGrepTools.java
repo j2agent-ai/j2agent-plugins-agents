@@ -1,5 +1,6 @@
 package io.github.jerryt92.j2agent.plugins.tool;
 
+import io.github.jerryt92.j2agent.service.rag.knowledge.repo.KnowledgeMarkdownImageRewriter;
 import io.github.jerryt92.j2agent.service.rag.knowledge.repo.KnowledgeRepoMetadataService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -36,14 +37,24 @@ public class KnowledgeRepoGrepTools {
 
     private final KnowledgeRepoMetadataService metadataService;
     private final String kbRelativeSubPath;
+    private final KnowledgeMarkdownImageRewriter imageRewriter;
 
     /**
      * @param metadataService   平台知识库元数据服务（提供 repo 根路径）
      * @param kbRelativeSubPath 相对知识库根的子目录，如 {@code j2agent-docs}；空串表示在 repo 根下搜索
      */
     public KnowledgeRepoGrepTools(KnowledgeRepoMetadataService metadataService, String kbRelativeSubPath) {
+        this(metadataService, kbRelativeSubPath, null);
+    }
+
+    /**
+     * @param imageRewriter 可选，将输出 Markdown 中的相对图片路径改写为 repo 直链（与 RAG 入库一致）
+     */
+    public KnowledgeRepoGrepTools(KnowledgeRepoMetadataService metadataService, String kbRelativeSubPath,
+                                  KnowledgeMarkdownImageRewriter imageRewriter) {
         this.metadataService = metadataService;
         this.kbRelativeSubPath = kbRelativeSubPath == null ? "" : kbRelativeSubPath.replace('\\', '/').trim();
+        this.imageRewriter = imageRewriter;
     }
 
     /**
@@ -191,6 +202,7 @@ public class KnowledgeRepoGrepTools {
             String content = Files.readString(resolvedFile, StandardCharsets.UTF_8);
             int limit = maxChars == null || maxChars <= 0 ? DEFAULT_READ_MAX_CHARS : maxChars;
             String relative = normalizedRoot.relativize(resolvedFile).toString().replace('\\', '/');
+            content = rewriteOutputMarkdown(relative, content);
             if (content.length() <= limit) {
                 return "**文件**: `" + relative + "`\n\n```markdown\n" + content + "\n```";
             }
@@ -337,14 +349,25 @@ public class KnowledgeRepoGrepTools {
         return base;
     }
 
+    private String rewriteOutputMarkdown(String relativeFile, String markdown) {
+        if (imageRewriter == null || StringUtils.isBlank(markdown)) {
+            return markdown;
+        }
+        return imageRewriter.rewriteTextChunkImages(relativeFile, markdown);
+    }
+
     private String formatFilenameMatchBlock(String relativeFile, List<String> lines) {
+        int to = Math.min(lines.size(), FILENAME_PREVIEW_LINES);
+        List<String> previewLines = lines.subList(0, to);
+        String rewrittenPreview = rewriteOutputMarkdown(relativeFile, String.join("\n", previewLines));
+        String[] rewrittenLines = rewrittenPreview.split("\n", -1);
+
         StringBuilder sb = new StringBuilder();
         sb.append("**文件**: `").append(relativeFile).append("`\n");
         sb.append("**命中方式**: 文件名匹配\n");
         sb.append("**预览** (前 ").append(FILENAME_PREVIEW_LINES).append(" 行):\n```\n");
-        int to = Math.min(lines.size(), FILENAME_PREVIEW_LINES);
-        for (int i = 0; i < to; i++) {
-            sb.append(i + 1).append(": ").append(lines.get(i)).append('\n');
+        for (int i = 0; i < rewrittenLines.length; i++) {
+            sb.append(i + 1).append(": ").append(rewrittenLines[i]).append('\n');
         }
         sb.append("```\n");
         sb.append("可调用 read_knowledge_repo_file 读取完整原文。");
@@ -354,12 +377,17 @@ public class KnowledgeRepoGrepTools {
     private String formatMatchBlock(String relativeFile, List<String> lines, int matchLineIndex) {
         int from = Math.max(0, matchLineIndex - CONTEXT_LINES);
         int to = Math.min(lines.size() - 1, matchLineIndex + CONTEXT_LINES);
+        List<String> contextLines = lines.subList(from, to + 1);
+        String rewrittenContext = rewriteOutputMarkdown(relativeFile, String.join("\n", contextLines));
+        String[] rewrittenLines = rewrittenContext.split("\n", -1);
+
         StringBuilder sb = new StringBuilder();
         sb.append("**文件**: `").append(relativeFile).append("`\n");
         sb.append("**命中行**: ").append(matchLineIndex + 1).append("\n```\n");
-        for (int i = from; i <= to; i++) {
-            String prefix = (i == matchLineIndex) ? ">> " : "   ";
-            sb.append(prefix).append(i + 1).append(": ").append(lines.get(i)).append('\n');
+        for (int i = 0; i < rewrittenLines.length; i++) {
+            int lineNum = from + i + 1;
+            String prefix = (lineNum - 1 == matchLineIndex) ? ">> " : "   ";
+            sb.append(prefix).append(lineNum).append(": ").append(rewrittenLines[i]).append('\n');
         }
         sb.append("```");
         return sb.toString();

@@ -5,6 +5,7 @@ import io.github.jerryt92.j2agent.service.llm.agent.inf.AiAgent;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.constant.AgentThinkingOverride;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.feature.ExternalSkills;
 import io.github.jerryt92.j2agent.service.rag.inf.AbstractCollectionKbRetriever;
+import io.github.jerryt92.j2agent.service.rag.knowledge.repo.KnowledgeMarkdownImageRewriter;
 import io.github.jerryt92.j2agent.service.rag.knowledge.repo.KnowledgeRepoMetadataService;
 import io.github.jerryt92.j2agent.tools.MathTool;
 import io.github.jerryt92.j2agent.tools.WebTool;
@@ -68,14 +69,18 @@ public class AssistantReactAgent extends AiAgent implements ExternalSkills {
 
     public AssistantReactAgent(
             MathTool mathTool,
-            @Qualifier("j2AgentDocsRetriever") AbstractCollectionKbRetriever j2AgentDocsRetriever, WebTool webTool, KnowledgeRepoMetadataService knowledgeRepoMetadataService) {
+            @Qualifier("j2AgentDocsRetriever") AbstractCollectionKbRetriever j2AgentDocsRetriever,
+            WebTool webTool,
+            KnowledgeRepoMetadataService knowledgeRepoMetadataService,
+            KnowledgeMarkdownImageRewriter knowledgeMarkdownImageRewriter) {
         this.mathTool = mathTool;
         this.j2AgentDocsRetriever = j2AgentDocsRetriever;
         this.webTool = webTool;
         /**
          * 相对 com.nms.ai.knowledge.repo.root-path 的 Wiki 子目录，与部署目录 wiki/info.json 一致。
          */
-        this.knowledgeRepoGrepTools = new KnowledgeRepoGrepTools(knowledgeRepoMetadataService, "j2agent-docs");
+        this.knowledgeRepoGrepTools = new KnowledgeRepoGrepTools(
+                knowledgeRepoMetadataService, "j2agent-docs", knowledgeMarkdownImageRewriter);
     }
 
     @Override
