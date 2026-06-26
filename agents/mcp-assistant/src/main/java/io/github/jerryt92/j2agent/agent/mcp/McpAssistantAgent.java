@@ -1,6 +1,6 @@
-package io.github.jerryt92.j2agent.agent.qa;
+package io.github.jerryt92.j2agent.agent.mcp;
 
-import io.github.jerryt92.j2agent.agent.qa.prompts.SystemPrompts;
+import io.github.jerryt92.j2agent.agent.mcp.prompts.McpAssistantPrompts;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.AiAgent;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.constant.AgentThinkingOverride;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.feature.ExternalSkills;
@@ -11,39 +11,39 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
- * 通用聊天助手Agent
+ * MCP 接入助手 Agent
  */
 @Slf4j
 @Component
-public class AssistantReactAgent extends AiAgent implements ExternalSkills, McpFeature {
+public class McpAssistantAgent extends AiAgent implements ExternalSkills, McpFeature {
     private final MathTool mathTool;
     private final WebTool webTool;
 
     @Override
     public String getAgentId() {
-        return "chat_assistant";
+        return "mcp_assistant";
     }
 
     @Override
     public String getAgentName() {
-        return "聊天助手";
+        return "MCP接入助手";
     }
 
     @Override
     public String getAgentDescription() {
-        return "通用聊天助手";
+        return "通过 MCP 调用已接入的外部工具与服务";
     }
 
     @Override
     public String getDispatchPrompt() {
         return """
-                J2Agent 平台通用对话助手；数学计算、网页检索、MCP 与 Skills 扩展能力。
-                典型问法：日常问答、简单计算、联网查询、平台使用指引、非文档类通用问题。""";
+                J2Agent MCP 接入助手；调用平台已连接的 MCP 工具完成用户任务，辅以数学计算与网页检索。
+                典型问法：使用某 MCP 服务能力（如查票、查数据、调外部 API）、需要工具调用的自动化问题。""";
     }
 
     @Override
     public String loadSystemPrompt() {
-        return SystemPrompts.GENERAL_ASSISTANT;
+        return McpAssistantPrompts.SYSTEM_PROMPT;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class AssistantReactAgent extends AiAgent implements ExternalSkills, McpF
 
     @Override
     public String getLogo() {
-        return "💬";
+        return "🔌";
     }
 
     @Override
@@ -66,8 +66,7 @@ public class AssistantReactAgent extends AiAgent implements ExternalSkills, McpF
         return AgentThinkingOverride.PROVIDER_DEFAULT;
     }
 
-    public AssistantReactAgent(
-            MathTool mathTool, WebTool webTool) {
+    public McpAssistantAgent(MathTool mathTool, WebTool webTool) {
         this.mathTool = mathTool;
         this.webTool = webTool;
     }

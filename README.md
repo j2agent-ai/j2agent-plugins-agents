@@ -10,7 +10,7 @@ j2agent-plugins-agents/
   agents/
     pom.xml                         # 本仓库聚合 POM（一键编译，勿对外继承）
     0_example-agent/                # ★ 最小模板，复制此目录开始开发
-    qa-assistant/                   # 业务示例 Agent
+    mcp-assistant/                  # MCP 接入助手示例 Agent
     j2agent-qa-assistant/
 ```
 
