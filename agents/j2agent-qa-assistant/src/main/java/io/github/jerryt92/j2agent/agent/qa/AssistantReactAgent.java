@@ -43,8 +43,24 @@ public class AssistantReactAgent extends AiAgent implements ExternalSkills {
     }
 
     @Override
+    public String getDispatchPrompt() {
+        return """
+                J2Agent 平台文档 Wiki（j2agent-docs 知识库）；grep + 向量 RAG 融合检索。
+                典型问法：平台功能操作步骤、Agent 开发指引、RAG/插件配置说明、故障排查；
+                亦可能覆盖 J2Agent 产品与开发文档类问题。""";
+    }
+
+    @Override
     public String loadSystemPrompt() {
-        return "你是 J2Agent AI，是解答关于 J2Agent 平台知识的问答助手。你的所属组织是 J2Agent AI 平台";
+        return """
+                你是 J2Agent AI，是解答关于 J2Agent 平台知识的问答助手。你的所属组织是 J2Agent AI 平台。
+                1. 采用融合检索：收到用户消息后调用 grep_knowledge_repo 检索关键词，同时阅读向量检索（RAG）提供的上下文；将 grep 结果与 RAG 上下文视为互补证据，取并集作答。
+                2. grep 有相关内容时，以 grep 原文为主、RAG 上下文补充；围绕用户问题合理呈现，保留关键步骤与图片，避免无脑照搬无关段落。
+                3. grep 行级检索未命中不代表无法回答：必须继续阅读 RAG 上下文；若上下文含【来源文件】路径且正文不足，调用 read_knowledge_repo_file 读取完整 Markdown 后再答；可换更短关键词再 grep 最多 1 次，之后必须基于已有证据作答或说明无法回答。
+                4. RAG 上下文中的【标题】、【正文】及图像 URL 均为有效答案依据；若正文含图像 URL，须在回答中输出图像的 Markdown。
+                5. 禁止提及答案来源于"grep""向量检索""RAG""知识库"等内部机制。
+                6. 禁止编造或凭常识补充产品信息；grep 与 RAG 均无相关内容时，礼貌说明无法回答。
+                """;
     }
 
     @Override
@@ -99,7 +115,7 @@ public class AssistantReactAgent extends AiAgent implements ExternalSkills {
     }
 
     /**
-     * 每次调用 grep_knowledge_repo 并阅读结果，grep 有相关内容则据此作答（不省略不总结不无脑照搬），无相关内容则用 RAG 上下文作答。
+     * 融合检索：grep 与 RAG 上下文互补，任一侧有可用内容即可作答。
      */
     @Override
     protected QueryAugmenter buildQueryAugmenter() {
@@ -111,10 +127,8 @@ public class AssistantReactAgent extends AiAgent implements ExternalSkills {
                 ---------------------
                 
                 规则：
-                1. 必须先调用 grep_knowledge_repo 并认真阅读其返回结果。
-                2. 阅读 grep 结果后判断是否包含与用户问题相关的内容：如果有相关内容，以 grep 结果为依据作答，禁止省略或总结原文内容，但也不要无脑照搬，需要围绕用户问题合理呈现；如果没有相关内容，则基于上述 RAG 上下文作答。
-                3. 不得凭常识回答；grep 和 RAG 均无相关内容时说明无法回答，不要编造或猜测。
-                4. 禁止提及答案来源于"grep""向量检索""RAG""知识库"等内部机制，避免"根据上下文""所提供的资料"等套话。
+                1. 【正文】中的图像 URL 须按 Markdown 图片格式输出。
+                2. 禁止提及答案来源于"向量检索""RAG""知识库"等内部机制，避免"根据上下文""所提供的资料"等套话。
                 
                 用户问题：{query}
                 
