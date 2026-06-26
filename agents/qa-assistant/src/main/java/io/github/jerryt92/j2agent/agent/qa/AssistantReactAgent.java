@@ -35,6 +35,13 @@ public class AssistantReactAgent extends AiAgent implements ExternalSkills, McpF
     }
 
     @Override
+    public String getDispatchPrompt() {
+        return """
+                J2Agent 平台通用对话助手；数学计算、网页检索、MCP 与 Skills 扩展能力。
+                典型问法：日常问答、简单计算、联网查询、平台使用指引、非文档类通用问题。""";
+    }
+
+    @Override
     public String loadSystemPrompt() {
         return SystemPrompts.GENERAL_ASSISTANT;
     }
