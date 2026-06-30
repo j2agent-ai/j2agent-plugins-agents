@@ -8,11 +8,11 @@
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <groupId>io.github.jerryt92.j2agent.qa</groupId>
-    <artifactId>qa-assistant</artifactId>
+    <groupId>io.github.jerryt92.j2agent.mcp</groupId>
+    <artifactId>mcp-assistant</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <description>通用聊天助手 Agent 插件</description>
+    <description>MCP 接入助手 Agent 插件</description>
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>

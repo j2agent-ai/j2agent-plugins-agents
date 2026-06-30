@@ -46,7 +46,7 @@
 
     <modules>
         <module>0_example-agent</module>
-        <module>qa-assistant</module>
+        <module>mcp-assistant</module>
         <module>j2agent-qa-assistant</module>
     </modules>
 
