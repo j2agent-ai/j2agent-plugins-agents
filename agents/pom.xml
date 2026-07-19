@@ -46,7 +46,7 @@
 
     <modules>
         <module>0_example-agent</module>
-        <module>mcp-assistant</module>
+        <module>train-12306-assistant</module>
         <module>j2agent-qa-assistant</module>
     </modules>
 

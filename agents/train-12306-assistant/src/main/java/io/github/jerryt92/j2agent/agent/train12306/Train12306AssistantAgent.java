@@ -1,6 +1,6 @@
-package io.github.jerryt92.j2agent.agent.mcp;
+package io.github.jerryt92.j2agent.agent.train12306;
 
-import io.github.jerryt92.j2agent.agent.mcp.prompts.McpAssistantPrompts;
+import io.github.jerryt92.j2agent.agent.train12306.prompts.Train12306AssistantPrompts;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.AiAgent;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.constant.AgentThinkingOverride;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.feature.ExternalSkills;
@@ -10,40 +10,42 @@ import io.github.jerryt92.j2agent.tools.WebTool;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
+
 /**
- * MCP 接入助手 Agent
+ * 12306 火车信息助手 Agent
  */
 @Slf4j
 @Component
-public class McpAssistantAgent extends AiAgent implements ExternalSkills, McpFeature {
+public class Train12306AssistantAgent extends AiAgent implements ExternalSkills, McpFeature {
     private final MathTool mathTool;
     private final WebTool webTool;
 
     @Override
     public String getAgentId() {
-        return "mcp_assistant";
+        return "train_12306_assistant";
     }
 
     @Override
     public String getAgentName() {
-        return "MCP接入助手";
+        return "12306火车信息助手";
     }
 
     @Override
     public String getAgentDescription() {
-        return "通过 MCP 调用已接入的外部工具与服务";
+        return "查询火车车次、余票、经停站与换乘方案等信息";
     }
 
     @Override
-    public String getDispatchPrompt() {
+    public String getOrchestrationPrompt() {
         return """
-                J2Agent MCP 接入助手；调用平台已连接的 MCP 工具完成用户任务，辅以数学计算与网页检索。
-                典型问法：使用某 MCP 服务能力（如查票、查数据、调外部 API）、需要工具调用的自动化问题。""";
+                J2Agent 12306 火车信息助手；查询车次、余票、经停站与换乘方案，辅以数学计算与网页检索。
+                典型问法：查某日两站间高铁余票、某车次经停站、换乘方案等火车出行相关问题。""";
     }
 
     @Override
     public String loadSystemPrompt() {
-        return McpAssistantPrompts.SYSTEM_PROMPT;
+        return Train12306AssistantPrompts.SYSTEM_PROMPT;
     }
 
     @Override
@@ -53,7 +55,7 @@ public class McpAssistantAgent extends AiAgent implements ExternalSkills, McpFea
 
     @Override
     public String getLogo() {
-        return "🔌";
+        return "🚄";
     }
 
     @Override
@@ -66,7 +68,18 @@ public class McpAssistantAgent extends AiAgent implements ExternalSkills, McpFea
         return AgentThinkingOverride.PROVIDER_DEFAULT;
     }
 
-    public McpAssistantAgent(MathTool mathTool, WebTool webTool) {
+    /** 仅接入 12306 MCP，不合并平台其它 MCP Server */
+    @Override
+    public boolean useAllMcpServers() {
+        return false;
+    }
+
+    @Override
+    public Set<String> useMcpServers() {
+        return Set.of("12306-mcp");
+    }
+
+    public Train12306AssistantAgent(MathTool mathTool, WebTool webTool) {
         this.mathTool = mathTool;
         this.webTool = webTool;
     }
