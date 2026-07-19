@@ -37,7 +37,7 @@ public class Train12306AssistantAgent extends AiAgent implements ExternalSkills,
     }
 
     @Override
-    public String getDispatchPrompt() {
+    public String getOrchestrationPrompt() {
         return """
                 J2Agent 12306 火车信息助手；查询车次、余票、经停站与换乘方案，辅以数学计算与网页检索。
                 典型问法：查某日两站间高铁余票、某车次经停站、换乘方案等火车出行相关问题。""";

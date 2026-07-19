@@ -43,7 +43,7 @@ public class AssistantReactAgent extends AiAgent implements ExternalSkills {
     }
 
     @Override
-    public String getDispatchPrompt() {
+    public String getOrchestrationPrompt() {
         return """
                 J2Agent 平台文档 Wiki（j2agent-docs 知识库）；grep + 向量 RAG 融合检索。
                 典型问法：平台功能操作步骤、Agent 开发指引、RAG/插件配置说明、故障排查；
