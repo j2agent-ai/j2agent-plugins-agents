@@ -1,5 +1,6 @@
 package io.github.jerryt92.j2agent.agent.qa;
 
+import io.github.jerryt92.j2agent.model.I18nString;
 import io.github.jerryt92.j2agent.plugins.tool.KnowledgeRepoGrepTools;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.AiAgent;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.constant.AgentThinkingOverride;
@@ -32,14 +33,20 @@ public class AssistantReactAgent extends AiAgent implements ExternalSkills {
         return "j2agent-qa-assistant";
     }
 
+    /** 返回 Agent 多语言显示名称 */
     @Override
-    public String getAgentName() {
-        return "J2Agent 文档问答助手";
+    public I18nString getAgentName() {
+        return new I18nString()
+                .zhCN("J2Agent 文档问答助手")
+                .enUS("J2Agent Docs QA Assistant");
     }
 
+    /** 返回 Agent 多语言描述 */
     @Override
-    public String getAgentDescription() {
-        return "J2Agent 文档问答助手";
+    public I18nString getAgentDescription() {
+        return new I18nString()
+                .zhCN("J2Agent 文档问答助手")
+                .enUS("J2Agent Docs QA Assistant");
     }
 
     @Override

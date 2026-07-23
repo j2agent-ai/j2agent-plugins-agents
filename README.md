@@ -102,6 +102,8 @@ tar -xzf agents/j2agent-qa-assistant/target/j2agent-qa-assistant-1.0.0-SNAPSHOT.
 
 推荐直接复制 [`0_example-agent`](agents/0_example-agent/) 目录，按需改名后开发。亦可自行维护 `pom.xml` 与 `src/main/assemblies/agent-package.xml`。
 
+`getAgentName()` / `getAgentDescription()` 须返回 `I18nString`（`zhCN` / `enUS`），平台按当前语言解析后对外返回普通字符串。
+
 ```xml
 <project>
   <modelVersion>4.0.0</modelVersion>
