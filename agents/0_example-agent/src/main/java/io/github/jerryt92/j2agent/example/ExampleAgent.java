@@ -1,5 +1,6 @@
 package io.github.jerryt92.j2agent.example;
 
+import io.github.jerryt92.j2agent.model.I18nString;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.AiAgent;
 import io.github.jerryt92.j2agent.tools.MathTool;
 import io.github.jerryt92.j2agent.tools.WebTool;
@@ -33,14 +34,20 @@ public class ExampleAgent extends AiAgent {
         return "example_agent";
     }
 
+    /** 返回 Agent 多语言显示名称 */
     @Override
-    public String getAgentName() {
-        return "示例 Agent";
+    public I18nString getAgentName() {
+        return new I18nString()
+                .zhCN("示例 Agent")
+                .enUS("Example Agent");
     }
 
+    /** 返回 Agent 多语言描述 */
     @Override
-    public String getAgentDescription() {
-        return "最小接入示例，用于验证插件加载与对话链路。";
+    public I18nString getAgentDescription() {
+        return new I18nString()
+                .zhCN("最小接入示例，用于验证插件加载与对话链路。")
+                .enUS("Minimal integration example for validating plugin loading and chat flow.");
     }
 
     @Override

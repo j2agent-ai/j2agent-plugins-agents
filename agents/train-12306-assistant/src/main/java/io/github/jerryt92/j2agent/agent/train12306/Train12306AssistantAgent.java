@@ -1,6 +1,7 @@
 package io.github.jerryt92.j2agent.agent.train12306;
 
 import io.github.jerryt92.j2agent.agent.train12306.prompts.Train12306AssistantPrompts;
+import io.github.jerryt92.j2agent.model.I18nString;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.AiAgent;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.constant.AgentThinkingOverride;
 import io.github.jerryt92.j2agent.service.llm.agent.inf.feature.ExternalSkills;
@@ -26,14 +27,20 @@ public class Train12306AssistantAgent extends AiAgent implements ExternalSkills,
         return "train_12306_assistant";
     }
 
+    /** 返回 Agent 多语言显示名称 */
     @Override
-    public String getAgentName() {
-        return "12306火车信息助手";
+    public I18nString getAgentName() {
+        return new I18nString()
+                .zhCN("12306火车信息助手")
+                .enUS("12306 Train Info Assistant");
     }
 
+    /** 返回 Agent 多语言描述 */
     @Override
-    public String getAgentDescription() {
-        return "查询火车车次、余票、经停站与换乘方案等信息";
+    public I18nString getAgentDescription() {
+        return new I18nString()
+                .zhCN("查询火车车次、余票、经停站与换乘方案等信息")
+                .enUS("Query train schedules, tickets, stops, and transfer options");
     }
 
     @Override
